@@ -30,34 +30,112 @@ initializing = True
 current_floor = 0
 predicted_floor = 0
 
+# Add these constants near the top
+PADDING = 10
+BG_COLOR = "#f0f0f0"
+PRIMARY_COLOR = "#2c3e50"
+ACCENT_COLOR = "#3498db"
+
 # Initialize Tkinter window and components
 root = tk.Tk()
 root.title("Gesture Recognition")
-video_frame = tk.Label(root)
-video_frame.pack()
+root.configure(bg=BG_COLOR)
+root.geometry("1024x768")  # Larger default size
+root.minsize(800, 600)    # Minimum window size
 
-# Create display labels
-gesture_label = tk.Label(root, text="Waiting for gesture...", font=("Helvetica", 16))
-gesture_label.pack()
-# counter_label = tk.Label(root, text=f"Counter: 0", font=("Helvetica", 16))
-# counter_label.pack()
-predicted_floor_label = tk.Label(root, text=f"Predicted Floor: 0", font=("Helvetica", 16))
-predicted_floor_label.pack()
-floor_label = tk.Label(root, text=f"Current Floor: 0", font=("Helvetica", 16))
-floor_label.pack()
+# Create main frames for better organization
+left_frame = tk.Frame(root, bg=BG_COLOR)
+left_frame.pack(side=tk.LEFT, padx=PADDING, pady=PADDING, fill=tk.BOTH, expand=True)
 
-# Create instruction display
-instructions = tk.Label(root, text="Gesture Instructions:", font=("Helvetica", 14, "bold"))
-instructions.pack()
+right_frame = tk.Frame(root, bg=BG_COLOR)
+right_frame.pack(side=tk.RIGHT, padx=PADDING, pady=PADDING, fill=tk.BOTH, expand=True)
+
+# Video frame with border
+video_container = tk.Frame(left_frame, bg=ACCENT_COLOR, padx=2, pady=2)
+video_container.pack(padx=PADDING, pady=PADDING, expand=True)
+video_frame = tk.Label(video_container)
+video_frame.pack(expand=True)
+
+# Status section
+status_frame = tk.Frame(right_frame, bg=BG_COLOR)
+status_frame.pack(fill=tk.X, padx=PADDING*2, pady=PADDING)
+
+gesture_label = tk.Label(
+    status_frame,
+    text="Waiting for gesture...",
+    font=("Helvetica", 16),
+    bg=BG_COLOR,
+    fg=PRIMARY_COLOR,
+    pady=5,
+    wraplength=300  # Allow text to wrap
+)
+gesture_label.pack(fill=tk.X)
+
+predicted_floor_label = tk.Label(
+    status_frame,
+    text="Predicted Floor: 0",
+    font=("Helvetica", 16, "bold"),
+    bg=BG_COLOR,
+    fg=ACCENT_COLOR,
+    pady=5,
+    wraplength=300
+)
+predicted_floor_label.pack(fill=tk.X)
+
+floor_label = tk.Label(
+    status_frame,
+    text="Current Floor: 0",
+    font=("Helvetica", 16),
+    bg=BG_COLOR,
+    fg=PRIMARY_COLOR,
+    pady=5,
+    wraplength=300
+)
+floor_label.pack(fill=tk.X)
+
+# Instructions section with controlled size and better alignment
+instructions_frame = tk.Frame(
+    right_frame,
+    bg=BG_COLOR,
+    relief=tk.GROOVE,
+    borderwidth=2,
+    width=400,  # Increased width
+    height=300  # Increased height
+)
+instructions_frame.pack(fill=tk.X, padx=PADDING*2, pady=PADDING)
+instructions_frame.pack_propagate(False)
+
+instructions_title = tk.Label(
+    instructions_frame,
+    text="Gesture Instructions",
+    font=("Helvetica", 14, "bold"),
+    bg=BG_COLOR,
+    fg=PRIMARY_COLOR,
+    pady=5
+)
+instructions_title.pack(anchor="n")
+
 instruction_text = """
-Victory (OK): Confirm floor selection
-All Fingers Up: +5 floors
-All Fingers Down: -5 floors
-Index Up: +1 floor
-Index Down: -1 floor
+✌️   Victory (OK): Confirm floor selection
+🖐️   All Fingers Up: +5 floors
+👇   All Fingers Down: -5 floors
+☝️   Index Up: +1 floor
+👎   Index Down: -1 floor
 """
-instructions_detail = tk.Label(root, text=instruction_text, font=("Helvetica", 12))
-instructions_detail.pack()
+
+instructions_detail = tk.Label(
+    instructions_frame,
+    text=instruction_text,
+    font=("Helvetica", 12),
+    bg=BG_COLOR,
+    fg=PRIMARY_COLOR,
+    justify=tk.LEFT,
+    anchor="w",
+    wraplength=350,  # Added wraplength to prevent text cutoff
+    padx=20,
+    pady=10
+)
+instructions_detail.pack(fill=tk.BOTH, anchor="w", expand=True)
 
 
 class Hand:

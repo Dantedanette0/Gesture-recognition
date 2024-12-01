@@ -33,6 +33,8 @@ video_frame = tk.Label(root)
 video_frame.pack()
 gesture_label = tk.Label(root, text=f"Gesture Counter: {gesture_counter}", font=("Helvetica", 16))
 gesture_label.pack()
+current_floor_label = tk.Label(root, text=f"Current Floor: {current_floor}", font=("Helvetica", 16))
+current_floor_label.pack()
 
 
 class Hand:
@@ -161,7 +163,10 @@ def update_frame():
     video_frame.configure(image=imgtk)
 
     gesture_label.config(text=f"Gesture Counter: {gesture_counter}")
+    current_floor_label.config(text=f"Current Floor: {current_floor} | Predicted Floor: {predicted_floor}")
     root.after(10, update_frame)
+    
+    
 
 
 

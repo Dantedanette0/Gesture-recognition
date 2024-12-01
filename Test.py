@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import tkinter as tk
 from PIL import Image, ImageTk
+import pygame
 
 # MediaPipe initialization
 mp_drawing = mp.solutions.drawing_utils
@@ -34,6 +35,8 @@ video_frame.pack()
 gesture_label = tk.Label(root, text=f"Gesture Counter: {gesture_counter}", font=("Helvetica", 16))
 gesture_label.pack()
 
+# Pygame mixer initialization
+pygame.mixer.init()
 
 class Hand:
     def __init__(self, hand_landmarks, margin):
@@ -94,6 +97,14 @@ def recognize_gesture(hand_landmarks):
         return "Neutral"
 
 
+def play_audio(file_name):
+    try:
+        pygame.mixer.music.load(file_name)
+        pygame.mixer.music.play()
+    except pygame.error as e:
+        print(f"Error playing audio: {e}")
+
+
 def update_frame():
     global gesture_counter, initializing, initial_victory_counter, current_floor, predicted_floor, last_n_gestures
 
@@ -122,6 +133,7 @@ def update_frame():
                     initializing = False
                     initial_victory_counter = 0
                     current_floor += gesture_counter
+                    play_audio('initialize.mp3')
 
                 predicted_floor = current_floor + gesture_counter
                 break
@@ -132,10 +144,12 @@ def update_frame():
 
             if last_n_gestures.count("All Fingers Pointing Up") == n:
                 gesture_counter += 10
+                play_audio('Floor_changing.mp3')
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("All Fingers Pointing Down") == n:
                 gesture_counter -= 10
+                play_audio('Floor_changing.mp3')
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Victory (OK)") == n:
@@ -146,10 +160,12 @@ def update_frame():
 
             elif last_n_gestures.count("Index Finger Pointing Up") == n:
                 gesture_counter += 1
+                play_audio('Floor_changing.mp3')
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Index Finger Pointing Down") == n:
                 gesture_counter -= 1
+                play_audio('Floor_changing.mp3')
                 last_n_gestures.clear()
 
             predicted_floor = current_floor + gesture_counter
@@ -162,7 +178,6 @@ def update_frame():
 
     gesture_label.config(text=f"Gesture Counter: {gesture_counter}")
     root.after(10, update_frame)
-
 
 
 update_frame()

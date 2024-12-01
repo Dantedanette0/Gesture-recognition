@@ -14,7 +14,7 @@ hands = mp_hands.Hands()
 gesture_counter = 0
 last_n_gestures = []  #helps us control speed along with n
 n = 30  # controls how fast the program changes the counter
-margin = 0.1  # more margin means more fingers must be up or down from the wrist (can make detecting hand from afar wonky)
+margin = 0.0  # more margin means more fingers must be up or down from the wrist (can make detecting hand from afar wonky)
 
 # Initial victory gesture frames requirement
 initial_victory_frames = 30

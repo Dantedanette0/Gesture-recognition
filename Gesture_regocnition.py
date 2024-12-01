@@ -12,7 +12,7 @@ hands = mp_hands.Hands()
 # counts how many n frames we held a gesture
 gesture_counter = 0
 last_n_gestures = []  #helps us control speed along with n
-n = 25  # controls how fast the program changes the counter
+n = 30  # controls how fast the program changes the counter
 margin = 0.1  # more margin means more fingers must be up or down from the wrist (can make detecting hand from afar wonky)
 
 # Initial victory gesture frames requirement
@@ -20,8 +20,10 @@ initial_victory_frames = 30
 initial_victory_counter = 0
 initializing = True
 
+
 # Global current floor variable
 current_floor = 0
+predicted_floor = 0
 
 #responsible for getting the position of each part of the fingers and checking it against each other
 class Hand:
@@ -96,6 +98,9 @@ while True:
     results = hands.process(image)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+    # Resize window to make the initial screen bigger
+    image = cv2.resize(image, (1280, 720))
+
     # If hand landmarks are detected, perform the following
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
@@ -106,7 +111,7 @@ while True:
             # Recognize gesture
             gesture = recognize_gesture(hand_landmarks)
 
-            # Initial gesture detection (20 frames of Victory gesture)
+            # Initial gesture detection (30 frames of Victory gesture)
             if initializing:
                 if gesture == "Victory (OK)":
                     initial_victory_counter += 1
@@ -118,10 +123,13 @@ while True:
                     initial_victory_counter = 0
                     current_floor += gesture_counter
 
-                cv2.putText(image, f"Show Victory Gesture to Start (Touch Floor {current_floor})", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
+                predicted_floor = current_floor + gesture_counter
+                cv2.putText(image, f"Show Victory Gesture to Start", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
                 cv2.putText(image, f"Current Floor: {current_floor}", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+
                 cv2.imshow('MediaPipe Hands', image)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
+
+                if cv2.waitKey(1) & 0xFF in [ord('q'), 27]:
                     break
                 continue
 
@@ -140,10 +148,11 @@ while True:
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Victory (OK)") == n:
-                current_floor += gesture_counter
-                gesture_counter = 0
-                initializing = True
-                last_n_gestures.clear()
+                    current_floor += gesture_counter
+                    gesture_counter = 0
+                    initializing = True
+                    last_n_gestures.clear()
+                    confirm_victory_counter = 0
 
             elif last_n_gestures.count("Index Finger Pointing Up") == n:
                 gesture_counter += 1
@@ -153,15 +162,24 @@ while True:
                 gesture_counter -= 1
                 last_n_gestures.clear()
 
-            # Display gesture, counter, and current floor
+            # Predict the floor we are going to if confirmed
+            predicted_floor = current_floor + gesture_counter
+
+            # Display gesture, counter, current floor, and predicted floor
             cv2.putText(image, gesture, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(image, f"Counter: {gesture_counter} (Show Victory Sign to Confirm Floor)", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, f"Counter: {gesture_counter} (Show Victory Sign to Confirm Floor {predicted_floor})", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
             cv2.putText(image, f"Current Floor: {current_floor}", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            cv2.putText(image, "Gesture List:", (10, 250), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "Victory (OK): Confirm floor selection", (10, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "All Fingers Pointing Up: Increase counter by 10", (10, 350), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "All Fingers Pointing Down: Decrease counter by 10", (10, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "Index Finger Pointing Up: Increase counter by 1", (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "Index Finger Pointing Down: Decrease counter by 1", (10, 500), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
 
     # Display landmarks of the hand
     cv2.imshow('MediaPipe Hands', image)
 
-    # Close the program when 'q' is pressed (waitKey checks if any key is pressed each frame)
+    # Close the program when 'q' or 'Esc' is pressed (waitKey checks if any key is pressed each frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

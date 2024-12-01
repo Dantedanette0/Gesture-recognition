@@ -16,7 +16,7 @@ n = 25  # controls how fast the program changes the counter
 margin = 0.1  # more margin means more fingers must be up or down from the wrist (can make detecting hand from afar wonky)
 
 # Initial victory gesture frames requirement
-initial_victory_frames = 60
+initial_victory_frames = 30
 initial_victory_counter = 0
 initializing = True
 
@@ -116,9 +116,9 @@ while True:
                 if initial_victory_counter >= initial_victory_frames:
                     initializing = False
                     initial_victory_counter = 0
-                    current_floor = gesture_counter
+                    current_floor += gesture_counter
 
-                cv2.putText(image, "Show Victory Gesture to Start", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, f"Show Victory Gesture to Start (Touch Floor {current_floor})", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
                 cv2.putText(image, f"Current Floor: {current_floor}", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
                 cv2.imshow('MediaPipe Hands', image)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -140,8 +140,8 @@ while True:
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Victory (OK)") == n:
-                #gesture_counter += 5
-                current_floor = gesture_counter
+                current_floor += gesture_counter
+                gesture_counter = 0
                 initializing = True
                 last_n_gestures.clear()
 

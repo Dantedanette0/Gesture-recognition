@@ -20,6 +20,9 @@ initial_victory_frames = 60
 initial_victory_counter = 0
 initializing = True
 
+# Global current floor variable
+current_floor = 0
+
 #responsible for getting the position of each part of the fingers and checking it against each other
 class Hand:
     def __init__(self, hand_landmarks, margin):
@@ -113,8 +116,10 @@ while True:
                 if initial_victory_counter >= initial_victory_frames:
                     initializing = False
                     initial_victory_counter = 0
+                    current_floor = gesture_counter
 
                 cv2.putText(image, "Show Victory Gesture to Start", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, f"Current Floor: {current_floor}", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
                 cv2.imshow('MediaPipe Hands', image)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
@@ -135,7 +140,9 @@ while True:
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Victory (OK)") == n:
-                gesture_counter += 5
+                #gesture_counter += 5
+                current_floor = gesture_counter
+                initializing = True
                 last_n_gestures.clear()
 
             elif last_n_gestures.count("Index Finger Pointing Up") == n:
@@ -146,9 +153,10 @@ while True:
                 gesture_counter -= 1
                 last_n_gestures.clear()
 
-            # Display gesture and counter
+            # Display gesture, counter, and current floor
             cv2.putText(image, gesture, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-            cv2.putText(image, f"Counter: {gesture_counter}", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, f"Counter: {gesture_counter} (Show Victory Sign to Confirm Floor)", (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, f"Current Floor: {current_floor}", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
     # Display landmarks of the hand
     cv2.imshow('MediaPipe Hands', image)

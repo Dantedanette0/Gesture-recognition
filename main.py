@@ -177,7 +177,7 @@ def update():
     ui.root.after(10, update)
 
     # Inside the update function, after gesture handling
-    if gesture_handler.initializing and gesture_handler.is_first_initialization:
+    if gesture_handler.initializing or gesture_handler.is_first_initialization:
         # Hide instructions during very first initialization
         ui.hide_instructions()
     elif not gesture_handler.initializing:

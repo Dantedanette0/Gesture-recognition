@@ -89,6 +89,20 @@ def update():
     # Schedule the next update
     ui.root.after(10, update)
 
+    # Inside the update function, after gesture handling
+    if gesture_handler.initializing and gesture_handler.is_first_initialization:
+        # Hide instructions during very first initialization
+        ui.hide_instructions()
+    elif not gesture_handler.initializing:
+        # Show instructions right after initialization
+        if not ui.floor_selected:
+            ui.show_instructions()
+        
+        # Reset floor_selected when starting a new gesture sequence
+        if gesture_handler.initial_victory_counter > 0:
+            ui.floor_selected = False
+            ui.show_instructions()
+
 # Start the UI
 ui.start(update)
 

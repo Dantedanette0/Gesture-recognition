@@ -8,6 +8,8 @@ class GestureHandler:
         self.initial_victory_counter = 0
         self.initializing = True
         self.current_floor = 0
+        self.is_first_initialization = True
+        self.just_initialized = False
 
         # Gesture data definitions   (name of the sign - number of frames that is has to remain active for the program to accept it 
         # - numbers of floors it changes each time you detect it - wether or not it can change the current floor)
@@ -88,4 +90,6 @@ class GestureHandler:
             self.initial_victory_counter = 0
             self.current_floor += self.gesture_counter
             self.play_audio('initialize.mp3')
+            self.is_first_initialization = False
+            self.just_initialized = True
 

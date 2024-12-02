@@ -20,6 +20,10 @@ class ElevatorUI:
         Hold gesture steady for a moment to register.
         """
         
+        # Add initialization state
+        self.is_initialized = False
+        self.floor_selected = False
+        
         # Initialize window
         self.root = tk.Tk()
         self.root.title("Gesture Recognition")
@@ -80,18 +84,18 @@ class ElevatorUI:
         self._setup_instructions(container)
 
     def _setup_instructions(self, parent):
-        instructions_frame = tk.Frame(
+        self.instructions_frame = tk.Frame(
             parent,
             bg=self.BG_COLOR,
             relief=tk.GROOVE,
             borderwidth=2,
             width=200
         )
-        instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
-        instructions_frame.pack_propagate(False)
+        # Don't pack the frame initially
+        self.instructions_frame.pack_propagate(False)
 
         instructions_title = tk.Label(
-            instructions_frame,
+            self.instructions_frame,
             text="Instructions",
             font=("Helvetica", 14, "bold"),
             bg=self.BG_COLOR,
@@ -100,7 +104,7 @@ class ElevatorUI:
         instructions_title.pack(pady=(5, 0))
 
         instructions_detail = tk.Label(
-            instructions_frame,
+            self.instructions_frame,
             text=self.instruction_text,
             font=("Helvetica", 10),
             bg=self.BG_COLOR,
@@ -143,6 +147,15 @@ class ElevatorUI:
         """Update the floor display labels"""
         self.floor_label.config(text=f"Current Floor: {current_floor}")
         self.predicted_floor_label.config(text=f"Predicted Floor: {predicted_floor}")
+        
+        # Reset floor_selected when starting a new selection
+        if current_floor != predicted_floor:
+            self.floor_selected = False
+        
+        # Hide instructions when a floor selection is confirmed
+        if current_floor != 0 and predicted_floor == current_floor:
+            self.floor_selected = True
+            self.hide_instructions()
 
     def update_gesture_label(self, text):
         """Update the gesture label text"""
@@ -152,3 +165,11 @@ class ElevatorUI:
         """Start the UI with the given update callback"""
         self.root.after(10, update_callback)
         self.root.mainloop()
+
+    def show_instructions(self):
+        """Show the instructions frame"""
+        self.instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
+
+    def hide_instructions(self):
+        """Hide the instructions frame"""
+        self.instructions_frame.pack_forget()

@@ -4,7 +4,7 @@ import tkinter as tk
 from PIL import Image, ImageTk, ImageDraw
 import pygame
 from hand import Hand
-from UI import setup_ui
+from UI import ElevatorUI
 from gesture_handler import GestureHandler
 
 # MediaPipe initialization
@@ -29,33 +29,30 @@ predicted_floor = 0
 # Pygame mixer initialization
 pygame.mixer.init()
 
-# Setup the UI
-tk_root, canvas, gesture_label, current_floor_label = setup_ui()
+# Initialize UI
+ui = ElevatorUI()
 
 # Initialize GestureHandler
 gesture_handler = GestureHandler(margin)
 
-while True:
-
-    #opens the camera and starts capturing
+def update():
+    # Initialize predicted_floor with the current calculation
+    predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
+    
     success, image = cap.read()
     if not success:
-        break
-    # Flip and process the image so we dont see a mirrored version of our selves
+        return
+    
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     results = hands.process(image)
 
-    #if you see hands do what ever is below
     if results.multi_hand_landmarks:
-
-        # draw the land marks on the fingers and also get their position
         for hand_landmarks in results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(
                 image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
             gesture = gesture_handler.recognize_gesture(hand_landmarks)
 
-            # this where the app doing the first confirmation and also where we set current floor    
             if gesture_handler.initializing:
                 gesture_handler.handle_initializing(gesture)
                 predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
@@ -79,18 +76,17 @@ while True:
 
             predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
 
+    # Update UI elements
+    ui.update_video(image)
+    ui.update_floor_display(gesture_handler.current_floor, predicted_floor)
+    ui.update_gesture_label(f"Gesture Counter: {gesture_handler.gesture_counter}")
+    
+    # Schedule the next update
+    ui.root.after(10, update)
 
-    # Convert the image to a format Tkinter understands
-    img = Image.fromarray(image)
-    imgtk = ImageTk.PhotoImage(image=img)
-    canvas.create_image(0, 0, anchor=tk.NW, image=imgtk)
-    canvas.imgtk = imgtk
+# Start the UI
+ui.start(update)
 
-    gesture_label.config(text=f"Gesture Counter: {gesture_handler.gesture_counter}")
-    current_floor_label.config(text=f"Current Floor: {gesture_handler.current_floor} | Predicted Floor: {predicted_floor}")
-
-    tk_root.update_idletasks()
-    tk_root.update()
-
+# The cleanup code should be called when the window is closed
 cap.release()
 cv2.destroyAllWindows()

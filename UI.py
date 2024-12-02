@@ -117,7 +117,7 @@ class ElevatorUI:
         
         self.instruction_boxes = []
         for text in self.instruction_text_boxes:
-            frame = tk.Frame(instructions_frame, bg=self.BG_COLOR, relief=tk.RIDGE, borderwidth=2)
+            frame = tk.Frame(instructions_frame, bg=self.BG_COLOR, relief=tk.RIDGE)
             frame.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
             label = tk.Label(
                 frame,
@@ -125,8 +125,8 @@ class ElevatorUI:
                 font=("Helvetica", 12),
                 bg=self.BG_COLOR,
                 fg=self.PRIMARY_COLOR,
-                justify=tk.LEFT,
-                wraplength=220
+                justify=tk.CENTER,
+                wraplength=200
             )
             label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
             self.instruction_boxes.append(frame)
@@ -138,8 +138,8 @@ class ElevatorUI:
             font=("Helvetica", 12),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
-            justify=tk.LEFT,
-            wraplength=220
+            justify=tk.CENTER,
+            wraplength=200
         )
         self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 

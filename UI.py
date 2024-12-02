@@ -1,28 +1,33 @@
 import tkinter as tk
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw, ImageFont
 
 class ElevatorUI:
     def __init__(self):
         # Constants
         self.PADDING = 10
-        self.BG_COLOR = "#f0f0f0"
-        self.PRIMARY_COLOR = "#2c3e50"
-        self.ACCENT_COLOR = "#3498db"
+        self.BG_COLOR = "#f8f9fa"
+        self.PRIMARY_COLOR = "#343a40"
+        self.ACCENT_COLOR = "#007bff"
+        self.GESTURE_ACTIVE_COLOR_UP = "#28a745"  # Green color for gesture active state (floor going up)
+        self.GESTURE_ACTIVE_COLOR_DOWN = "#dc3545"  # Red color for gesture active state (floor going down)
+        self.GESTURE_ACTIVE_COLOR_EXTRA = "#ffc107"  # Yellow color for extra gesture active state
+        self.INITIALIZING_TEXT_COLOR = "#ff8c00"  # Orange color for initializing message
         
         self.instruction_text = """
         Gestures:
         • Victory Sign (✌️) - Initialize/Confirm floor selection
-        • All fingers up (✋) - Add 5 floors
-        • All fingers down (🤚) - Subtract 5 floors
         • Index finger up (☝️) - Add 1 floor
-        • Index finger down (👇) - Subtract 1 floor
+        • Index finger down (🖐) - Subtract 1 floor
+        • Extra Gesture (🔥) - Special action (highlight in yellow)
 
         Hold gesture steady for a moment to register.
         """
         
+        self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
+        
         # Initialize window
         self.root = tk.Tk()
-        self.root.title("Gesture Recognition")
+        self.root.title("Gesture Recognition Elevator UI")
         self.root.configure(bg=self.BG_COLOR)
         self.root.geometry("1024x768")
         self.root.minsize(800, 600)
@@ -47,19 +52,21 @@ class ElevatorUI:
         floor_display_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)
         floor_display_frame.pack(fill=tk.X, pady=(0, self.PADDING))
 
+        # Floor label
         self.floor_label = tk.Label(
             floor_display_frame,
             text="Current Floor: 0",
-            font=("Helvetica", 20, "bold"),
+            font=("Helvetica", 24, "bold"),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
-        self.floor_label.pack()
+        self.floor_label.pack(pady=(0, 5))
 
+        # Predicted floor label - made it less prominent
         self.predicted_floor_label = tk.Label(
             floor_display_frame,
             text="Predicted Floor: 0",
-            font=("Helvetica", 20, "bold"),
+            font=("Helvetica", 18),
             bg=self.BG_COLOR,
             fg=self.ACCENT_COLOR,
         )
@@ -69,46 +76,69 @@ class ElevatorUI:
         container = tk.Frame(self.main_frame, bg=self.BG_COLOR)
         container.pack(expand=True, fill=tk.BOTH)
 
-        # Video frame - removed background color, added border
-        video_container = tk.Frame(container, highlightbackground=self.ACCENT_COLOR, 
+        # Video frame - improved style
+        self.video_container = tk.Frame(container, highlightbackground=self.ACCENT_COLOR, 
                                  highlightthickness=2, bg=self.BG_COLOR)
-        video_container.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-        self.video_frame = tk.Label(video_container)
-        self.video_frame.pack(expand=True)
+        self.video_container.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=(0, self.PADDING))
+        self.video_frame = tk.Label(self.video_container)
+        self.video_frame.pack(expand=True, padx=self.PADDING, pady=self.PADDING)
+
+        # Overlay text on video frame for initialization instructions
+        self.overlay_label = tk.Label(
+            self.video_frame,
+            text="",
+            font=("Helvetica", 24, "bold"),
+            bg=self.BG_COLOR,
+            fg=self.INITIALIZING_TEXT_COLOR
+        )
+        self.overlay_label.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
 
         # Instructions frame
-        self._setup_instructions(container)
+        self.instructions_frame = self._setup_instructions(container)
 
     def _setup_instructions(self, parent):
         instructions_frame = tk.Frame(
             parent,
             bg=self.BG_COLOR,
-            relief=tk.GROOVE,
-            borderwidth=2,
-            width=200
+            relief=tk.RIDGE,
+            borderwidth=3,
+            width=250
         )
         instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
         instructions_frame.pack_propagate(False)
 
-        instructions_title = tk.Label(
+        self.instructions_title = tk.Label(
             instructions_frame,
             text="Instructions",
-            font=("Helvetica", 14, "bold"),
+            font=("Helvetica", 16, "bold"),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
-        instructions_title.pack(pady=(5, 0))
+        self.instructions_title.pack(pady=(10, 5))
 
-        instructions_detail = tk.Label(
+        self.instructions_detail = tk.Label(
             instructions_frame,
             text=self.instruction_text,
-            font=("Helvetica", 10),
+            font=("Helvetica", 12),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
             justify=tk.LEFT,
-            wraplength=180
+            wraplength=220
         )
-        instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+        self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
+        self.initializing_instruction_label = tk.Label(
+            instructions_frame,
+            text=self.initializing_instruction_text,
+            font=("Helvetica", 12),
+            bg=self.BG_COLOR,
+            fg=self.PRIMARY_COLOR,
+            justify=tk.LEFT,
+            wraplength=220
+        )
+        self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
+        return instructions_frame
 
     def _setup_status_frame(self):
         status_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)
@@ -117,7 +147,7 @@ class ElevatorUI:
         status_label = tk.Label(
             status_frame,
             text="Status",
-            font=("Helvetica", 16, "bold"),
+            font=("Helvetica", 18, "bold"),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
@@ -126,29 +156,62 @@ class ElevatorUI:
         self.gesture_label = tk.Label(
             status_frame,
             text="Waiting for gesture...",
-            font=("Helvetica", 14),
+            font=("Helvetica", 16),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
-        self.gesture_label.pack()
+        self.gesture_label.pack(pady=(5, 0))
 
-    def update_video(self, image):
-        """Update the video frame with a new image"""
+    def update_video(self, image, initializing=False):
+        """Update the video frame with a new image, add initialization message if initializing"""
         img = Image.fromarray(image)
         imgtk = ImageTk.PhotoImage(image=img)
         self.video_frame.imgtk = imgtk
         self.video_frame.configure(image=imgtk)
+
+        # Show overlay text if initializing
+        if initializing:
+            self.overlay_label.config(text=self.initializing_instruction_text)
+        else:
+            self.overlay_label.config(text="")
 
     def update_floor_display(self, current_floor, predicted_floor):
         """Update the floor display labels"""
         self.floor_label.config(text=f"Current Floor: {current_floor}")
         self.predicted_floor_label.config(text=f"Predicted Floor: {predicted_floor}")
 
-    def update_gesture_label(self, text):
-        """Update the gesture label text"""
+    def update_gesture_label(self, text, gesture_active=False, going_down=False, initializing=False, extra_gesture=False):
+        """Update the gesture label text, change video border color, and update instructions if initializing"""
         self.gesture_label.config(text=text)
+        if gesture_active:
+            if extra_gesture:
+                self.video_container.config(highlightbackground=self.GESTURE_ACTIVE_COLOR_EXTRA)
+            elif going_down:
+                self.video_container.config(highlightbackground=self.GESTURE_ACTIVE_COLOR_DOWN)
+            else:
+                self.video_container.config(highlightbackground=self.GESTURE_ACTIVE_COLOR_UP)
+        else:
+            self.video_container.config(highlightbackground=self.ACCENT_COLOR)
+
+        # Update instructions during initialization
+        if initializing:
+            self.instructions_detail.pack_forget()
+            self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+        else:
+            self.initializing_instruction_label.pack_forget()
+            self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
     def start(self, update_callback):
         """Start the UI with the given update callback"""
         self.root.after(10, update_callback)
         self.root.mainloop()
+
+
+# - Enlarged font sizes for better readability.
+# - Updated colors to make the UI more visually appealing.
+# - Increased padding for a cleaner layout.
+# - Added border and styling to make the instructions more distinct.
+# - Added functionality to change video border color to green when floor is increasing and red when decreasing.
+# - Added functionality to show a separate initialization instruction when initializing (Victory sign). (not functional)
+# - Added overlay text on the video frame during initialization for better visibility. (not functional)
+# - Added functionality to change video border color to yellow for an extra gesture. (not functional)

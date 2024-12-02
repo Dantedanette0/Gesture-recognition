@@ -39,7 +39,7 @@ def update():
     # Initialize predicted_floor with the current calculation
     predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
     
-    # opens the camera and starts capturing
+    # Capture image from webcam
     success, image = cap.read()
     if not success:
         return
@@ -48,43 +48,60 @@ def update():
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     results = hands.process(image)
 
-    # if you see hands do what ever is below
+    # Gesture state tracking
+    gesture_active = False
+    going_down = False
+
+    # If hands are detected, process the landmarks
     if results.multi_hand_landmarks:
-        # draw the landmarks on the fingers and also get their position
         for hand_landmarks in results.multi_hand_landmarks:
+            # Draw the landmarks on the fingers and also get their position
             mp_drawing.draw_landmarks(
                 image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
+            # Recognize gesture from landmarks
             gesture = gesture_handler.recognize_gesture(hand_landmarks)
 
-            # this is where the app does the first confirmation and also where we set current floor
+            # Handle initializing phase
             if gesture_handler.initializing:
                 gesture_handler.handle_initializing(gesture)
                 predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
+                # Hide instructions during initialization
+                ui.update_gesture_label(f"Initializing... Gesture Counter: {gesture_handler.gesture_counter}", initializing=True)
                 break
 
-            # Handle gestures
+            # Handle gestures and set gesture_active if floor is changing
             if gesture == "Victory (OK)":
                 gesture_handler.handle_gesture(gesture, gesture_handler.victory_gesture_data, 'Confirm.mp3')
 
             elif gesture == "All Fingers Pointing Up":
                 gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_up_data, '10_floors.mp3')
+                gesture_active = True
+                going_down = False  # Floor is going up
 
             elif gesture == "All Fingers Pointing Down":
                 gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_down_data, '10_floors.mp3')
+                gesture_active = True
+                going_down = True  # Floor is going down
 
             elif gesture == "Index Finger Pointing Up":
                 gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_up_data, 'Floor_changing.mp3')
+                gesture_active = True
+                going_down = False  # Floor is going up
 
             elif gesture == "Index Finger Pointing Down":
                 gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_down_data, 'Floor_changing.mp3')
+                gesture_active = True
+                going_down = True  # Floor is going down
 
+            # Update predicted floor
             predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
 
     # Update UI elements
     ui.update_video(image)
     ui.update_floor_display(gesture_handler.current_floor, predicted_floor)
-    ui.update_gesture_label(f"Gesture Counter: {gesture_handler.gesture_counter}")
+    # Update gesture label and manage instructions visibility based on initializing state
+    ui.update_gesture_label(f"Gesture Counter: {gesture_handler.gesture_counter}", gesture_active=gesture_active, going_down=going_down, initializing=gesture_handler.initializing)
     
     # Schedule the next update
     ui.root.after(10, update)

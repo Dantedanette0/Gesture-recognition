@@ -144,23 +144,23 @@ class ElevatorUI:
         status_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)
         status_frame.pack(fill=tk.X, pady=self.PADDING)
 
-        status_label = tk.Label(
+        '''status_label = tk.Label(
             status_frame,
             text="Status",
             font=("Helvetica", 18, "bold"),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
-        status_label.pack()
+        status_label.pack()'''
 
-        self.gesture_label = tk.Label(
+        '''self.gesture_label = tk.Label(
             status_frame,
             text="Waiting for gesture...",
             font=("Helvetica", 16),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
-        )
-        self.gesture_label.pack(pady=(5, 0))
+        )'''
+        '''self.gesture_label.pack(pady=(5, 0))'''
 
     def update_video(self, image, initializing=False):
         """Update the video frame with a new image, add initialization message if initializing"""
@@ -169,11 +169,7 @@ class ElevatorUI:
         self.video_frame.imgtk = imgtk
         self.video_frame.configure(image=imgtk)
 
-        # Show overlay text if initializing
-        if initializing:
-            self.overlay_label.config(text=self.initializing_instruction_text)
-        else:
-            self.overlay_label.config(text="")
+ 
 
     def update_floor_display(self, current_floor, predicted_floor):
         """Update the floor display labels"""
@@ -207,11 +203,4 @@ class ElevatorUI:
         self.root.mainloop()
 
 
-# - Enlarged font sizes for better readability.
-# - Updated colors to make the UI more visually appealing.
-# - Increased padding for a cleaner layout.
-# - Added border and styling to make the instructions more distinct.
-# - Added functionality to change video border color to green when floor is increasing and red when decreasing.
-# - Added functionality to show a separate initialization instruction when initializing (Victory sign). (not functional)
-# - Added overlay text on the video frame during initialization for better visibility. (not functional)
-# - Added functionality to change video border color to yellow for an extra gesture. (not functional)
+

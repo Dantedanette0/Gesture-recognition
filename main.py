@@ -39,20 +39,25 @@ def update():
     # Initialize predicted_floor with the current calculation
     predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
     
+    # opens the camera and starts capturing
     success, image = cap.read()
     if not success:
         return
     
+    # Flip and process the image so we don't see a mirrored version of ourselves
     image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
     results = hands.process(image)
 
+    # if you see hands do what ever is below
     if results.multi_hand_landmarks:
+        # draw the landmarks on the fingers and also get their position
         for hand_landmarks in results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(
                 image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
             gesture = gesture_handler.recognize_gesture(hand_landmarks)
 
+            # this is where the app does the first confirmation and also where we set current floor
             if gesture_handler.initializing:
                 gesture_handler.handle_initializing(gesture)
                 predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter

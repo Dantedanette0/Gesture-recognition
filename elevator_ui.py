@@ -69,8 +69,9 @@ class ElevatorUI:
         container = tk.Frame(self.main_frame, bg=self.BG_COLOR)
         container.pack(expand=True, fill=tk.BOTH)
 
-        # Video frame
-        video_container = tk.Frame(container, bg=self.ACCENT_COLOR, padx=2, pady=2)
+        # Video frame - removed background color, added border
+        video_container = tk.Frame(container, highlightbackground=self.ACCENT_COLOR, 
+                                 highlightthickness=2, bg=self.BG_COLOR)
         video_container.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
         self.video_frame = tk.Label(video_container)
         self.video_frame.pack(expand=True)

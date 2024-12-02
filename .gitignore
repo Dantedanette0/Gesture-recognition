@@ -3,3 +3,4 @@ __pycache__/
 *.py[cod]
 *$py.class 
 elevator_ui.cpython-312.pyc
+gesture_handler.cpython-312.pyc

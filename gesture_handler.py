@@ -35,6 +35,7 @@ class GestureHandler:
             return "Neutral"
 
     def play_audio(self, file_name):
+        file_name = 'audio/' + file_name
         try:
             pygame.mixer.music.load(file_name)
             pygame.mixer.music.play()
@@ -86,5 +87,5 @@ class GestureHandler:
             self.initializing = False
             self.initial_victory_counter = 0
             self.current_floor += self.gesture_counter
-            self.play_audio('audio/initialize.mp3')
+            self.play_audio('initialize.mp3')
 

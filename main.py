@@ -80,7 +80,7 @@ def update():
     # Add initializing text to the image
     if gesture_handler.initializing:
         # Make the text flash by alternating visibility based on time
-        if int(time.time() * 2) % 2 == 0:
+        if int(time.time() * 2) % 1 == 0:
             cv2.putText(image, "Show Victory Sign to Unlock", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2, cv2.LINE_AA)
     else:
         cv2.putText(image, "selecting floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 255, 0), 2)
@@ -186,7 +186,7 @@ def update():
             ui.show_instructions()
         
         # Reset floor_selected when starting a new gesture sequence
-        if gesture_handler.initial_victory_counter > 0:
+        if gesture_handler.initial_victory_counter >= 0:
             ui.floor_selected = False
             ui.show_instructions()
 

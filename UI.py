@@ -112,8 +112,6 @@ class ElevatorUI:
         self.instructions_frame.pack_propagate(False)
 
         self.instructions_title = tk.Label(
-            instructions_frame,
-        instructions_title = tk.Label(
             self.instructions_frame,
             text="Instructions",
             font=("Helvetica", 16, "bold"),
@@ -123,8 +121,6 @@ class ElevatorUI:
         self.instructions_title.pack(pady=(10, 5))
 
         self.instructions_detail = tk.Label(
-            instructions_frame,
-        instructions_detail = tk.Label(
             self.instructions_frame,
             text=self.instruction_text,
             font=("Helvetica", 12),
@@ -136,7 +132,7 @@ class ElevatorUI:
         self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
         self.initializing_instruction_label = tk.Label(
-            instructions_frame,
+            self.instructions_frame,
             text=self.initializing_instruction_text,
             font=("Helvetica", 12),
             bg=self.BG_COLOR,
@@ -146,7 +142,7 @@ class ElevatorUI:
         )
         self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
-        return instructions_frame
+        return self.instructions_frame
 
     def _setup_status_frame(self):
         status_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)

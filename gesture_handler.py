@@ -86,4 +86,5 @@ class GestureHandler:
             self.initializing = False
             self.initial_victory_counter = 0
             self.current_floor += self.gesture_counter
-            self.play_audio('initialize.mp3')
+            self.play_audio('audio/initialize.mp3')
+

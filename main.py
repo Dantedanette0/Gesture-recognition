@@ -83,7 +83,7 @@ def update():
         if int(time.time() * 2) % 1 == 0:
             cv2.putText(image, "Show Victory Sign to Unlock", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(image, "selecting floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 255, 0), 2)
+        cv2.putText(image, "Selecting Floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 255, 0), 2)
   
 
     # Gesture state tracking

@@ -27,7 +27,7 @@ class ElevatorUI:
         self.is_initialized = False
         self.floor_selected = False
         
-        self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
+        # self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
         
         # Initialize window
         self.root = tk.Tk()
@@ -123,24 +123,32 @@ class ElevatorUI:
         self.instructions_detail = tk.Label(
             self.instructions_frame,
             text=self.instruction_text,
-            font=("Helvetica", 12),
+            font=("Arial", 16),
             bg=self.BG_COLOR,
-            fg=self.PRIMARY_COLOR,
-            justify=tk.LEFT,
-            wraplength=220
+            fg="#2c3e50",
+            justify=tk.CENTER,
+            wraplength=200,  # Increased wraplength for better text flow
+            anchor=tk.CENTER  # Center text vertically and horizontally
         )
-        self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+        # Pack the label with increased padding and centered alignment
+        self.instructions_detail.pack(
+            padx=20,  # Increased horizontal padding
+            pady=15,  # Increased vertical padding
+            fill=tk.BOTH,
+            expand=True,
+            anchor=tk.CENTER  # Center the label in the frame
+        )
 
-        self.initializing_instruction_label = tk.Label(
-            self.instructions_frame,
-            text=self.initializing_instruction_text,
-            font=("Helvetica", 12),
-            bg=self.BG_COLOR,
-            fg=self.PRIMARY_COLOR,
-            justify=tk.LEFT,
-            wraplength=220
-        )
-        self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+        # self.initializing_instruction_label = tk.Label(
+        #     self.instructions_frame,
+        #     text=self.initializing_instruction_text,
+        #     font=("Helvetica", 12),
+        #     bg=self.BG_COLOR,
+        #     fg=self.PRIMARY_COLOR,
+        #     justify=tk.CENTER,
+        #     wraplength=220
+        # )
+        # self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
         return self.instructions_frame
 

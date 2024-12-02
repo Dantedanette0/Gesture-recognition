@@ -13,19 +13,15 @@ class ElevatorUI:
         self.GESTURE_ACTIVE_COLOR_EXTRA = "#ffc107"  # Yellow color for extra gesture active state
         self.INITIALIZING_TEXT_COLOR = "#ff8c00"  # Orange color for initializing message
         
-        self.instruction_text = """
-        Gestures:
-        • Victory Sign (✌️) - Initialize/Confirm floor selection
-        • Index finger up (☝️) - Add 1 floor
-        • Index finger down (🖐) - Subtract 1 floor
-        • Extra Gesture (🔥) - Special action (highlight in yellow)
-
-        Hold gesture steady for a moment to register.
-        """
+        self.instruction_text_boxes = [
+            "Victory Sign (✌️) - Initialize/Confirm floor selection",
+            "Index finger up (☝️) - Add 1 floor",
+            "Index finger down (🖐) - Subtract 1 floor",
+            "Extra Gesture (🔥) - Special action (highlight in yellow)",
+            "Hold gesture steady for a moment to register."
+        ]
         
-        # Add initialization state
-        self.is_initialized = False
-        self.floor_selected = False
+        self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
         
         # Initialize window
         self.root = tk.Tk()
@@ -79,12 +75,8 @@ class ElevatorUI:
         container.pack(expand=True, fill=tk.BOTH)
 
         # Video frame - improved style
-        self.video_container = tk.Frame(
-            container,
-            highlightbackground=self.ACCENT_COLOR,
-            highlightthickness=2,
-            bg=self.BG_COLOR
-        )
+        self.video_container = tk.Frame(container, highlightbackground=self.ACCENT_COLOR, 
+                                 highlightthickness=2, bg=self.BG_COLOR)
         self.video_container.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=(0, self.PADDING))
         self.video_frame = tk.Label(self.video_container)
         self.video_frame.pack(expand=True, padx=self.PADDING, pady=self.PADDING)
@@ -103,18 +95,18 @@ class ElevatorUI:
         self.instructions_frame = self._setup_instructions(container)
 
     def _setup_instructions(self, parent):
-        self.instructions_frame = tk.Frame(
+        instructions_frame = tk.Frame(
             parent,
             bg=self.BG_COLOR,
             relief=tk.RIDGE,
             borderwidth=3,
             width=250
         )
-        # Don't pack the frame initially
-        self.instructions_frame.pack_propagate(False)
+        instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
+        instructions_frame.pack_propagate(False)
 
         self.instructions_title = tk.Label(
-            self.instructions_frame,
+            instructions_frame,
             text="Instructions",
             font=("Helvetica", 16, "bold"),
             bg=self.BG_COLOR,
@@ -122,26 +114,36 @@ class ElevatorUI:
         )
         self.instructions_title.pack(pady=(10, 5))
 
-        self.instructions_detail = tk.Label(
-            self.instructions_frame,
-            text=self.instruction_text,
-            font=("Arial", 16),
-            bg=self.BG_COLOR,
-            fg="#2c3e50",
-            justify=tk.CENTER,
-            wraplength=200,  # Increased wraplength for better text flow
-            anchor=tk.CENTER  # Center text vertically and horizontally
-        )
-        # Pack the label with increased padding and centered alignment
-        self.instructions_detail.pack(
-            padx=20,  # Increased horizontal padding
-            pady=15,  # Increased vertical padding
-            fill=tk.BOTH,
-            expand=True,
-            anchor=tk.CENTER  # Center the label in the frame
-        )
+        
+        self.instruction_boxes = []
+        for text in self.instruction_text_boxes:
+            frame = tk.Frame(instructions_frame, bg=self.BG_COLOR, relief=tk.RIDGE, borderwidth=2)
+            frame.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+            label = tk.Label(
+                frame,
+                text=text,
+                font=("Helvetica", 12),
+                bg=self.BG_COLOR,
+                fg=self.PRIMARY_COLOR,
+                justify=tk.LEFT,
+                wraplength=220
+            )
+            label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+            self.instruction_boxes.append(frame)
+        
 
-        return self.instructions_frame
+        self.initializing_instruction_label = tk.Label(
+            instructions_frame,
+            text=self.initializing_instruction_text,
+            font=("Helvetica", 12),
+            bg=self.BG_COLOR,
+            fg=self.PRIMARY_COLOR,
+            justify=tk.LEFT,
+            wraplength=220
+        )
+        self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
+        return instructions_frame
 
     def _setup_status_frame(self):
         status_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)
@@ -178,15 +180,6 @@ class ElevatorUI:
         """Update the floor display labels"""
         self.floor_label.config(text=f"Current Floor: {current_floor}")
         self.predicted_floor_label.config(text=f"Predicted Floor: {predicted_floor}")
-        
-        # Reset floor_selected when starting a new selection
-        if current_floor != predicted_floor:
-            self.floor_selected = False
-        
-        # Hide instructions when a floor selection is confirmed
-        if current_floor != 0 and predicted_floor == current_floor:
-            self.floor_selected = True
-            self.hide_instructions()
 
     def update_gesture_label(self, text, gesture_active=False, going_down=False, initializing=False, extra_gesture=False):
         """Update the gesture label text, change video border color, and update instructions if initializing"""
@@ -210,11 +203,6 @@ class ElevatorUI:
             self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
     def start(self, update_callback):
+        """Start the UI with the given update callback"""
         self.root.after(10, update_callback)
         self.root.mainloop()
-
-    def show_instructions(self):
-        self.instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
-
-    def hide_instructions(self):
-        self.instructions_frame.pack_forget()

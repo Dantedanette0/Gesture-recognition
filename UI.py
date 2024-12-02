@@ -27,8 +27,6 @@ class ElevatorUI:
         self.is_initialized = False
         self.floor_selected = False
         
-        # self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
-        
         # Initialize window
         self.root = tk.Tk()
         self.root.title("Gesture Recognition Elevator UI")
@@ -81,8 +79,12 @@ class ElevatorUI:
         container.pack(expand=True, fill=tk.BOTH)
 
         # Video frame - improved style
-        self.video_container = tk.Frame(container, highlightbackground=self.ACCENT_COLOR, 
-                                 highlightthickness=2, bg=self.BG_COLOR)
+        self.video_container = tk.Frame(
+            container,
+            highlightbackground=self.ACCENT_COLOR,
+            highlightthickness=2,
+            bg=self.BG_COLOR
+        )
         self.video_container.pack(side=tk.LEFT, expand=True, fill=tk.BOTH, padx=(0, self.PADDING))
         self.video_frame = tk.Label(self.video_container)
         self.video_frame.pack(expand=True, padx=self.PADDING, pady=self.PADDING)
@@ -138,17 +140,6 @@ class ElevatorUI:
             expand=True,
             anchor=tk.CENTER  # Center the label in the frame
         )
-
-        # self.initializing_instruction_label = tk.Label(
-        #     self.instructions_frame,
-        #     text=self.initializing_instruction_text,
-        #     font=("Helvetica", 12),
-        #     bg=self.BG_COLOR,
-        #     fg=self.PRIMARY_COLOR,
-        #     justify=tk.CENTER,
-        #     wraplength=220
-        # )
-        # self.initializing_instruction_label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
         return self.instructions_frame
 

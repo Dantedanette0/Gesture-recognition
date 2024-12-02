@@ -210,14 +210,11 @@ class ElevatorUI:
             self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
     def start(self, update_callback):
-        """Start the UI with the given update callback"""
         self.root.after(10, update_callback)
         self.root.mainloop()
 
     def show_instructions(self):
-        """Show the instructions frame"""
         self.instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
 
     def hide_instructions(self):
-        """Hide the instructions frame"""
         self.instructions_frame.pack_forget()

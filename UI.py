@@ -13,15 +13,13 @@ class ElevatorUI:
         self.GESTURE_ACTIVE_COLOR_EXTRA = "#ffc107"  # Yellow color for extra gesture active state
         self.INITIALIZING_TEXT_COLOR = "#ff8c00"  # Orange color for initializing message
         
-        self.instruction_text = """
-        Gestures:
-        • Victory Sign (✌️) - Initialize/Confirm floor selection
-        • Index finger up (☝️) - Add 1 floor
-        • Index finger down (🖐) - Subtract 1 floor
-        • Extra Gesture (🔥) - Special action (highlight in yellow)
-
-        Hold gesture steady for a moment to register.
-        """
+        self.instruction_text_boxes = [
+            "Victory Sign (✌️) - Initialize/Confirm floor selection",
+            "Index finger up (☝️) - Add 1 floor",
+            "Index finger down (🖐) - Subtract 1 floor",
+            "Extra Gesture (🔥) - Special action (highlight in yellow)",
+            "Hold gesture steady for a moment to register."
+        ]
         
         self.initializing_instruction_text = "Please show the Victory Sign (✌️) to start selecting floors."
         
@@ -116,16 +114,23 @@ class ElevatorUI:
         )
         self.instructions_title.pack(pady=(10, 5))
 
-        self.instructions_detail = tk.Label(
-            instructions_frame,
-            text=self.instruction_text,
-            font=("Helvetica", 12),
-            bg=self.BG_COLOR,
-            fg=self.PRIMARY_COLOR,
-            justify=tk.LEFT,
-            wraplength=220
-        )
-        self.instructions_detail.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+        
+        self.instruction_boxes = []
+        for text in self.instruction_text_boxes:
+            frame = tk.Frame(instructions_frame, bg=self.BG_COLOR, relief=tk.RIDGE, borderwidth=2)
+            frame.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+            label = tk.Label(
+                frame,
+                text=text,
+                font=("Helvetica", 12),
+                bg=self.BG_COLOR,
+                fg=self.PRIMARY_COLOR,
+                justify=tk.LEFT,
+                wraplength=220
+            )
+            label.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+            self.instruction_boxes.append(frame)
+        
 
         self.initializing_instruction_label = tk.Label(
             instructions_frame,
@@ -201,6 +206,3 @@ class ElevatorUI:
         """Start the UI with the given update callback"""
         self.root.after(10, update_callback)
         self.root.mainloop()
-
-
-

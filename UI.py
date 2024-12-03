@@ -13,7 +13,7 @@ class ElevatorUI:
         self.GESTURE_ACTIVE_COLOR_EXTRA = "#ffc107"  # Yellow color for extra gesture active state
         self.INITIALIZING_TEXT_COLOR = "#ff8c00"  # Orange color for initializing message
         
-        self.instructions = [
+        self.INSTRUCTIONS = [
             "Victory Sign (✌️) - Initialize/Confirm floor selection",
             "Index finger up (☝️) - Add 1 floor",
             "Index finger down (🖐) - Subtract 1 floor",
@@ -98,10 +98,10 @@ class ElevatorUI:
         self.overlay_label.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
 
         # Instructions frame
-        self.instructions_frame = self._setup_instructions(container)
+        self.INSTRUCTIONS_frame = self._setup_instructions(container)
 
     def _setup_instructions(self, parent):
-        self.instructions_frame = tk.Frame(
+        self.INSTRUCTIONS_frame = tk.Frame(
             parent,
             bg=self.BG_COLOR,
             relief=tk.RIDGE,
@@ -109,21 +109,21 @@ class ElevatorUI:
             width=250
         )
         # Don't pack the frame initially
-        self.instructions_frame.pack_propagate(False)
+        self.INSTRUCTIONS_frame.pack_propagate(False)
 
-        self.instructions_title = tk.Label(
-            self.instructions_frame,
+        self.INSTRUCTIONS_title = tk.Label(
+            self.INSTRUCTIONS_frame,
             text="Instructions",
             font=("Helvetica", 16, "bold"),
             bg=self.BG_COLOR,
             fg=self.PRIMARY_COLOR,
         )
-        self.instructions_title.pack(pady=(10, 5))
+        self.INSTRUCTIONS_title.pack(pady=(10, 5))
 
         # Create separate frames for each instruction
-        for instruction in self.instructions:
+        for instruction in self.INSTRUCTIONS:
             instruction_frame = tk.Frame(
-                self.instructions_frame,
+                self.INSTRUCTIONS_frame,
                 bg=self.BG_COLOR,
                 relief=tk.RIDGE,
                 borderwidth=1
@@ -142,29 +142,12 @@ class ElevatorUI:
             )
             instruction_label.pack(fill=tk.X, padx=5, pady=5)
 
-        return self.instructions_frame
+        return self.INSTRUCTIONS_frame
 
     def _setup_status_frame(self):
         status_frame = tk.Frame(self.main_frame, bg=self.BG_COLOR)
         status_frame.pack(fill=tk.X, pady=self.PADDING)
 
-        '''status_label = tk.Label(
-            status_frame,
-            text="Status",
-            font=("Helvetica", 18, "bold"),
-            bg=self.BG_COLOR,
-            fg=self.PRIMARY_COLOR,
-        )
-        status_label.pack()'''
-
-        '''self.gesture_label = tk.Label(
-            status_frame,
-            text="Waiting for gesture...",
-            font=("Helvetica", 16),
-            bg=self.BG_COLOR,
-            fg=self.PRIMARY_COLOR,
-        )'''
-        '''self.gesture_label.pack(pady=(5, 0))'''
 
     def update_video(self, image, initializing=False):
         """Update the video frame with a new image, add initialization message if initializing"""
@@ -213,7 +196,7 @@ class ElevatorUI:
         self.root.mainloop()
 
     def show_instructions(self):
-        self.instructions_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
+        self.INSTRUCTIONS_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(self.PADDING, 0))
 
     def hide_instructions(self):
-        self.instructions_frame.pack_forget()
+        self.INSTRUCTIONS_frame.pack_forget()

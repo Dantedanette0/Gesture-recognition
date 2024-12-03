@@ -40,7 +40,7 @@ FLOOR_CHANGE_1X_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirna
 FLOOR_CHANGE_10X_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "audio/Floor_Change_10x.mp3")
 
 #draws the box around the hand , the text and its background above the box DO NOT CHANGE THE COORDINATES
-def draw_detection_box(results, image, character, box_color, label_text, predicted_floor, show_floor=False):
+def draw_detection_box(results, image, box_color, label_text, predicted_floor, show_floor=False):
     hand_landmarks_list = results.multi_hand_landmarks
     for i in range(len(hand_landmarks_list)):
         hand_landmarks = hand_landmarks_list[i]
@@ -52,7 +52,6 @@ def draw_detection_box(results, image, character, box_color, label_text, predict
         x_bottom_left = int(max(x_coordinates) * image.shape[1]) + 25
         y_bottom_left = int(max(y_coordinates) * image.shape[0]) + 25
         box_width = x_bottom_left - x_top_right
-        box_height = y_bottom_left - y_top_right
 
         #we are drawing the text and the rectangles in scale of each other so they dont get out 
         cv2.rectangle(image, (x_top_right, y_top_right), (x_bottom_left, y_bottom_left), box_color, thickness=10)
@@ -88,10 +87,6 @@ def update():
     else:
         cv2.putText(image, "Selecting Floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 255, 0), 2)
   
-
-    # Gesture state tracking
-    gesture_active = False
-    going_down = False
 
     # State-specific box colors and labels
     state_config = {
@@ -130,36 +125,28 @@ def update():
             # Handle gestures while changing floors
             if not gesture_handler.initializing:
                 if gesture == "All Fingers Pointing Up":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_up_data, FLOOR_CHANGE_10X_AUDIO_PATH)
-                    gesture_active = True
-                    going_down = False  # Floor is going up
+                    gesture_handler.handle_gesture(gesture_handler.all_fingers_up_data, FLOOR_CHANGE_10X_AUDIO_PATH)
                     current_state = "All Fingers Pointing Up"
                     show_floor = True
 
                 elif gesture == "All Fingers Pointing Down":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_down_data, FLOOR_CHANGE_10X_AUDIO_PATH)
-                    gesture_active = True
-                    going_down = True  # Floor is going down
+                    gesture_handler.handle_gesture(gesture_handler.all_fingers_down_data, FLOOR_CHANGE_10X_AUDIO_PATH)
                     current_state = "All Fingers Pointing Down"
                     show_floor = True
 
                 elif gesture == "Index Finger Pointing Up":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_up_data, FLOOR_CHANGE_1X_AUDIO_PATH)
-                    gesture_active = True
-                    going_down = False  # Floor is going up
+                    gesture_handler.handle_gesture(gesture_handler.index_finger_up_data, FLOOR_CHANGE_1X_AUDIO_PATH)
                     current_state = "Index Finger Pointing Up"
                     show_floor = True
 
                 elif gesture == "Index Finger Pointing Down":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_down_data, FLOOR_CHANGE_1X_AUDIO_PATH)
-                    gesture_active = True
-                    going_down = True  # Floor is going down
+                    gesture_handler.handle_gesture(gesture_handler.index_finger_down_data, FLOOR_CHANGE_1X_AUDIO_PATH)
                     current_state = "Index Finger Pointing Down"
                     show_floor = True
 
                 elif gesture == "Victory (OK)":
                     # Confirm the current floor selection
-                    gesture_handler.handle_gesture(gesture, gesture_handler.victory_gesture_data, CONFIRM_AUDIO_PATH)
+                    gesture_handler.handle_gesture(gesture_handler.victory_gesture_data, CONFIRM_AUDIO_PATH)
                     current_state = "Victory (OK)"
                     show_floor = True
 
@@ -167,10 +154,9 @@ def update():
                 predicted_floor = gesture_handler.current_floor + gesture_handler.gesture_counter
 
         # Draw detection box around the detected hand
-        character = ['Hand']  # Placeholder character to label the box
         box_color = state_config[current_state]["box_color"]
         label_text = state_config[current_state]["label_text"]
-        image = draw_detection_box(results, image, character, box_color, label_text, predicted_floor, show_floor=show_floor)
+        image = draw_detection_box(results, image, box_color, label_text, predicted_floor, show_floor=show_floor)
 
     # Update UI elements
     ui.update_video(image)

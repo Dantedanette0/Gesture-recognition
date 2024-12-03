@@ -56,7 +56,7 @@ class GestureHandler:
             "update_floor": update_floor
         }
 
-    def handle_gesture(self, gesture, gesture_data, audio_file):
+    def handle_gesture(self, gesture_data, audio_file):
         gesture_list = gesture_data['gesture_list']
         gesture_name = gesture_data['gesture_name']
         threshold = gesture_data['threshold']

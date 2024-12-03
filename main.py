@@ -1,9 +1,8 @@
+import os
+import sys
 import cv2
 import mediapipe as mp
-import tkinter as tk
-from PIL import Image, ImageTk, ImageDraw
 import pygame
-from hand import Hand
 from UI import ElevatorUI
 from gesture_handler import GestureHandler
 import time
@@ -35,6 +34,10 @@ ui = ElevatorUI()
 
 # Initialize GestureHandler
 gesture_handler = GestureHandler(margin)
+
+CONFIRM_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "audio/Confirm.mp3")
+FLOOR_CHANGE_1X_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "audio/Floor_Change_1x.mp3")
+FLOOR_CHANGE_10X_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "audio/Floor_Change_10x.mp3")
 
 #draws the box around the hand , the text and its background above the box DO NOT CHANGE THE COORDINATES
 def draw_detection_box(results, image, character, box_color, label_text, predicted_floor, show_floor=False):
@@ -127,28 +130,28 @@ def update():
             # Handle gestures while changing floors
             if not gesture_handler.initializing:
                 if gesture == "All Fingers Pointing Up":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_up_data, '10_floors.mp3')
+                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_up_data, FLOOR_CHANGE_10X_AUDIO_PATH)
                     gesture_active = True
                     going_down = False  # Floor is going up
                     current_state = "All Fingers Pointing Up"
                     show_floor = True
 
                 elif gesture == "All Fingers Pointing Down":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_down_data, '10_floors.mp3')
+                    gesture_handler.handle_gesture(gesture, gesture_handler.all_fingers_down_data, FLOOR_CHANGE_10X_AUDIO_PATH)
                     gesture_active = True
                     going_down = True  # Floor is going down
                     current_state = "All Fingers Pointing Down"
                     show_floor = True
 
                 elif gesture == "Index Finger Pointing Up":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_up_data, 'Floor_changing.mp3')
+                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_up_data, FLOOR_CHANGE_1X_AUDIO_PATH)
                     gesture_active = True
                     going_down = False  # Floor is going up
                     current_state = "Index Finger Pointing Up"
                     show_floor = True
 
                 elif gesture == "Index Finger Pointing Down":
-                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_down_data, 'Floor_changing.mp3')
+                    gesture_handler.handle_gesture(gesture, gesture_handler.index_finger_down_data, FLOOR_CHANGE_1X_AUDIO_PATH)
                     gesture_active = True
                     going_down = True  # Floor is going down
                     current_state = "Index Finger Pointing Down"
@@ -156,7 +159,7 @@ def update():
 
                 elif gesture == "Victory (OK)":
                     # Confirm the current floor selection
-                    gesture_handler.handle_gesture(gesture, gesture_handler.victory_gesture_data, 'Confirm.mp3')
+                    gesture_handler.handle_gesture(gesture, gesture_handler.victory_gesture_data, CONFIRM_AUDIO_PATH)
                     current_state = "Victory (OK)"
                     show_floor = True
 

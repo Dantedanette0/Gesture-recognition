@@ -1,5 +1,5 @@
 import tkinter as tk
-from PIL import Image, ImageTk, ImageDraw, ImageFont
+from PIL import Image, ImageTk
 
 class ElevatorUI:
     def __init__(self):

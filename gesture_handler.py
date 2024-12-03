@@ -1,5 +1,9 @@
+import os
+import sys
 import pygame
 from hand import Hand
+
+INITIALIZE_CHANGE_AUDIO_PATH = os.path.join(getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__))), "audio/Initialize.mp3")
 
 class GestureHandler:
     def __init__(self, margin):
@@ -37,7 +41,6 @@ class GestureHandler:
             return "Neutral"
 
     def play_audio(self, file_name):
-        file_name = 'audio/' + file_name
         try:
             pygame.mixer.music.load(file_name)
             pygame.mixer.music.play()
@@ -89,7 +92,7 @@ class GestureHandler:
             self.initializing = False
             self.initial_victory_counter = 0
             self.current_floor += self.gesture_counter
-            self.play_audio('initialize.mp3')
+            self.play_audio(INITIALIZE_CHANGE_AUDIO_PATH)
             self.is_first_initialization = False
             self.just_initialized = True
 

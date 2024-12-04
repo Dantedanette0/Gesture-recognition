@@ -14,11 +14,12 @@ class ElevatorUI:
         self.INITIALIZING_TEXT_COLOR = "#ff8c00"  # Orange color for initializing message
         
         self.INSTRUCTIONS = [
-            "Victory Sign (✌️) - Initialize/Confirm floor selection",
-            "Index finger up (☝️) - Add 1 floor",
-            "Index finger down (🖐) - Subtract 1 floor",
-            "Extra Gesture (🔥) - Special action (highlight in yellow)",
-            "Hold gesture steady for a moment to register."
+            "Victory Sign (✌️): Initialize/Confirm floor selection",
+            "Index Finger Up (☝️): Add 1 floor",
+            "Index Finger Down (🖐): Subtract 1 floor",
+            "Whole Hand Up (🖐): Add 10 floors",
+            "Whole Hand Down (✋): Subtract 10 floors",
+            "Note: Hold gesture steady for a moment to register"
         ]
         
         # Add initialization state

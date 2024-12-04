@@ -134,7 +134,7 @@ class ElevatorUI:
             instruction_label = tk.Label(
                 instruction_frame,
                 text=instruction,
-                font=("Arial", 14),
+                font=("Helvetica", 14),
                 bg=self.BG_COLOR,
                 fg="#2c3e50",
                 wraplength=200,

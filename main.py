@@ -58,12 +58,12 @@ def draw_detection_box(results, image, box_color, label_text, predicted_floor, s
         cv2.rectangle(image, (x_top_right, y_top_right), (x_bottom_left, y_bottom_left), (0, 0, 0), thickness=3)
         if gesture_handler.initializing:
             cv2.rectangle(image, (x_top_right - 3, y_top_right - 30), (x_top_right + 100 + box_width, y_top_right), (0, 0, 0), thickness=-1)
-            cv2.putText(image, label_text, (x_top_right + 5, y_top_right - 5), cv2.FONT_HERSHEY_TRIPLEX, color=box_color, fontScale=1)
+            cv2.putText(image, label_text, (x_top_right + 5, y_top_right - 5), cv2.FONT_HERSHEY_SIMPLEX, color=box_color, fontScale=1)
         # Draw the predicted floor above the gesture label only if we are able to change the floor
         if show_floor:
             # Draw black box background for predicted floor
             cv2.rectangle(image, (x_top_right - 3, y_top_right - 60), (x_top_right + 175 + box_width, y_top_right - 30), (0, 0, 0), thickness=-1)
-            cv2.putText(image, f"You are going to floor: {predicted_floor}", (x_top_right + 5, y_top_right - 35), cv2.FONT_HERSHEY_TRIPLEX, color=box_color, fontScale=min(box_width / 250, 0.75))
+            cv2.putText(image, f"You are going to floor: {predicted_floor}", (x_top_right + 5, y_top_right - 35), cv2.FONT_HERSHEY_SIMPLEX, color=box_color, fontScale=min(box_width / 250, 0.75))
     return image
 
 def update():
@@ -83,18 +83,26 @@ def update():
     if gesture_handler.initializing:
         # Make the text flash by alternating visibility based on time
         if int(time.time() * 2) % 1 == 0:
+            cv2.putText(image, "Show Peace Sign", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 0), 6, cv2.LINE_AA)
             cv2.putText(image, "Show Peace Sign", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 0), 2, cv2.LINE_AA)
     else:
-        cv2.putText(image, "Selecting Floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 255, 0), 2)
+        cv2.putText(image, "Selecting Floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(255, 255, 255), 6)
+        cv2.putText(image, "Selecting Floor", (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 0, 0), 2)
+
   
 
     # State-specific box colors and labels
     state_config = {
         "Victory (OK)": {"box_color": (255,255,0), "label_text": "Victory (OK)"},
-        "All Fingers Pointing Up": {"box_color": (50,205,50), "label_text": "All Fingers Pointing Up"},
+
+        "All Fingers Pointing Up": {"box_color": (0, 255, 0), "label_text": "All Fingers Pointing Up"},
+
         "All Fingers Pointing Down": {"box_color": (255,0,0), "label_text": "All Fingers Pointing Down"},
-        "Index Finger Pointing Up": {"box_color": (0, 255, 0), "label_text": "Index Finger Pointing Up"},
+
+        "Index Finger Pointing Up": {"box_color": (50,205,50), "label_text": "Index Finger Pointing Up"},
+
         "Index Finger Pointing Down": {"box_color": (220,20,60), "label_text": "Index Finger Pointing Down"},
+
         "idle": {"box_color": (169, 169, 169), "label_text": "Idle"}  
     }
 
